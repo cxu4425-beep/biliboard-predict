@@ -263,39 +263,42 @@ async function loadStatus() {
 }
 
 /* ------------------------------------------------------------------ 週榜 / 傳說曲週榜 */
+/* 窄螢幕要藏哪些欄位，用 class 標在格子上：hm = 手機隱藏（≤720px），hs = 更窄才隱藏（≤480px）。
+   以前是在 style.css 用 nth-child 列索引，表格一加欄位索引就錯位 ——
+   實際發生過：藏掉了最重要的「預測得分」，卻留著「時間修正」「估計法」。 */
 const WEEK_HEAD = `<thead><tr>
   <th class="mid" style="width:54px">名次</th><th style="width:92px">封面</th><th>曲名</th>
-  <th style="width:170px">歌姬 / 作曲家</th><th class="mid" style="width:62px">類別</th>
-  <th class="mid" style="width:88px">上期</th>
-  <th class="num" style="width:54px" title="主榜在榜次數（含本期，若本期進主榜）">在榜</th>
-  <th class="num" style="width:54px" title="主榜最高排名（含本期）">最高</th>
-  <th class="mid" style="width:86px" title="近 8 期主榜名次與本期預測名次（粉紅點）；橫線以上為前 20 名">走勢</th>
+  <th class="hm" style="width:170px">歌姬 / 作曲家</th><th class="mid hm" style="width:62px">類別</th>
+  <th class="mid hm" style="width:88px">上期</th>
+  <th class="num hm" style="width:54px" title="主榜在榜次數（含本期，若本期進主榜）">在榜</th>
+  <th class="num hm" style="width:54px" title="主榜最高排名（含本期）">最高</th>
+  <th class="mid hs" style="width:86px" title="近 8 期主榜名次與本期預測名次（粉紅點）；橫線以上為前 20 名">走勢</th>
   <th class="num" style="width:104px">預測得分</th>
-  <th class="num" style="width:78px" title="rate：預測得分 ÷ 上期得分 − 1，與 Biliboard 影片中的 rate 同一算法">rate</th>
-  <th class="num" style="width:96px" title="bilibili 目前的累計播放數（即時）">目前累計播放</th>
-  <th class="num" style="width:96px" title="本統計時段（上週二→本週二）預測的新增播放">本週新增播放</th>
-  <th class="num" style="width:78px">新增收藏</th><th class="num" style="width:78px">新增硬幣</th>
-  <th class="num" style="width:78px">新增點讚</th>
-  <th class="num" style="width:64px">時間修正</th><th class="mid" style="width:96px">估計法</th></tr></thead>`;
+  <th class="num hm" style="width:78px" title="rate：預測得分 ÷ 上期得分 − 1，與 Biliboard 影片中的 rate 同一算法">rate</th>
+  <th class="num hm" style="width:96px" title="bilibili 目前的累計播放數（即時）">目前累計播放</th>
+  <th class="num hm" style="width:96px" title="本統計時段（上週二→本週二）預測的新增播放">本週新增播放</th>
+  <th class="num hm" style="width:78px">新增收藏</th><th class="num hm" style="width:78px">新增硬幣</th>
+  <th class="num hm" style="width:78px">新增點讚</th>
+  <th class="num hm" style="width:64px">時間修正</th><th class="mid hm" style="width:96px">估計法</th></tr></thead>`;
 
 function weekRow(x, maxPt) {
   return `<tr title="${esc(x.detail || '')}">
     <td class="mid">${rk(x.rank)}</td><td>${cover(x)}</td>
     <td>${titleCell(x)}${x.in_official === 0 ? `<span class="tag m" title="本時段新曲，官方下週二同步收錄池時才會確定是否收錄；估計收錄可能性 ${Math.round((x.inclusion || 0) * 100)}%">候補 · 尚未進官方池</span>` : ''}${runTag(x)}
       <div class="bar" style="width:${Math.max(3, 100 * x.score / maxPt)}%"></div></td>
-    <td>${tags(x.vocalists, 's')}${tags(x.producers, 'p')}</td>
-    <td class="mid">${catTag(x.category)}</td>
-    <td class="mid">${chg(x.chart)}</td>
-    <td class="num">${x.chart && x.chart.weeks ? x.chart.weeks : '—'}</td>
-    <td class="num">${x.chart && x.chart.peak ? (x.chart.main && x.chart.peak === x.rank && x.chart.peak !== x.chart.peak_before ? '<b class="pk">' + x.chart.peak + '</b>' : x.chart.peak) : '—'}</td>
-    <td class="mid">${sparkRank(x.chart && x.chart.trend, x.rank)}</td>
+    <td class="hm">${tags(x.vocalists, 's')}${tags(x.producers, 'p')}</td>
+    <td class="mid hm">${catTag(x.category)}</td>
+    <td class="mid hm">${chg(x.chart)}</td>
+    <td class="num hm">${x.chart && x.chart.weeks ? x.chart.weeks : '—'}</td>
+    <td class="num hm">${x.chart && x.chart.peak ? (x.chart.main && x.chart.peak === x.rank && x.chart.peak !== x.chart.peak_before ? '<b class="pk">' + x.chart.peak + '</b>' : x.chart.peak) : '—'}</td>
+    <td class="mid hs">${sparkRank(x.chart && x.chart.trend, x.rank)}</td>
     <td class="num"><b>${nf(x.score)}</b></td>
-    <td class="num">${rateCell(x.rate)}</td>
-    <td class="num muted">${nf(x.live_views)}</td>
-    <td class="num">${nf(x.pred.views)}</td><td class="num">${nf(x.pred.favorites)}</td>
-    <td class="num">${nf(x.pred.coins)}</td><td class="num">${nf(x.pred.likes)}</td>
-    <td class="num">${x.time_correction > 1.0001 ? '<b>' + x.time_correction.toFixed(2) + '</b>' : '1'}</td>
-    <td class="mid"><span class="meth ${methCls(x.method)}">${METH[x.method] || x.method}</span></td></tr>`;
+    <td class="num hm">${rateCell(x.rate)}</td>
+    <td class="num muted hm">${nf(x.live_views)}</td>
+    <td class="num hm">${nf(x.pred.views)}</td><td class="num hm">${nf(x.pred.favorites)}</td>
+    <td class="num hm">${nf(x.pred.coins)}</td><td class="num hm">${nf(x.pred.likes)}</td>
+    <td class="num hm">${x.time_correction > 1.0001 ? '<b>' + x.time_correction.toFixed(2) + '</b>' : '1'}</td>
+    <td class="mid hm"><span class="meth ${methCls(x.method)}">${METH[x.method] || x.method}</span></td></tr>`;
 }
 function renderBoard(tbl, list) {
   const maxPt = Math.max(1, ...list.map(x => x.score));
@@ -358,10 +361,10 @@ async function loadLegend() {
 
 /* ------------------------------------------------------------------ 半年 / 年榜 */
 const PER_HEAD = `<thead><tr><th class="mid" style="width:54px">名次</th><th style="width:92px">封面</th><th>曲名</th>
-  <th style="width:170px">歌姬 / 作曲家</th><th class="mid" style="width:62px">類別</th>
-  <th class="num" style="width:120px">預測總得分</th><th class="num" style="width:110px">官方已公布</th>
-  <th class="num" style="width:96px">缺漏週估算</th><th class="num" style="width:96px">本週預測</th>
-  <th class="num" style="width:70px">上榜週數</th><th class="num" style="width:70px">最佳名次</th></tr></thead>`;
+  <th class="hm" style="width:170px">歌姬 / 作曲家</th><th class="mid hm" style="width:62px">類別</th>
+  <th class="num" style="width:120px">預測總得分</th><th class="num hm" style="width:110px">官方已公布</th>
+  <th class="num hm" style="width:96px">缺漏週估算</th><th class="num hm" style="width:96px">本週預測</th>
+  <th class="num hm" style="width:70px">上榜週數</th><th class="num hs" style="width:70px">最佳名次</th></tr></thead>`;
 async function loadPeriod(kind) {
   const d = await api('/api/predict/period?kind=' + kind);
   const tbl = kind === 'half' ? '#tblHalf' : '#tblAnnual';
@@ -373,10 +376,10 @@ async function loadPeriod(kind) {
     (kind === 'annual' ? ' 上半年部分直接採用官方 2026 上半年榜數據。' : '');
   $(tbl).innerHTML = PER_HEAD + '<tbody>' + d.list.map(x => `<tr>
     <td class="mid">${rk(x.rank)}</td><td>${cover(x)}</td><td>${titleCell(x)}</td>
-    <td>${tags(x.vocalists, 's')}${tags(x.producers, 'p')}</td><td class="mid">${catTag(x.category)}</td>
-    <td class="num"><b>${nf(x.total)}</b></td><td class="num">${nf(x.known)}</td>
-    <td class="num">${nf(x.imputed)}</td><td class="num">${nf(x.predicted)}</td>
-    <td class="num">${x.weeks}</td><td class="num">${x.best_rank ?? '—'}</td></tr>`).join('') + '</tbody>';
+    <td class="hm">${tags(x.vocalists, 's')}${tags(x.producers, 'p')}</td><td class="mid hm">${catTag(x.category)}</td>
+    <td class="num"><b>${nf(x.total)}</b></td><td class="num hm">${nf(x.known)}</td>
+    <td class="num hm">${nf(x.imputed)}</td><td class="num hm">${nf(x.predicted)}</td>
+    <td class="num hm">${x.weeks}</td><td class="num hs">${x.best_rank ?? '—'}</td></tr>`).join('') + '</tbody>';
 }
 
 /* ------------------------------------------------------------------ 歷史 */
@@ -401,20 +404,20 @@ async function openIssue(n) {
     <small>統計 ${dt(m.start_date, 'd')} → ${dt(m.end_date, 'd')}　·　${m.video_count} 首
     ${m.video_bvid ? `　·　<a href="${bili(m.video_bvid)}" target="_blank" rel="noopener">官方影片</a>` : ''}</small>`;
   $('#tblIssue').innerHTML = `<thead><tr><th class="mid" style="width:54px">名次</th><th style="width:92px">封面</th><th>曲名</th>
-    <th style="width:170px">歌姬 / 作曲家</th><th class="mid" style="width:88px">上期</th><th class="num" style="width:110px">官方得分</th>
-    <th class="num" style="width:74px" title="rate：官方公布的得分與上期相比的增減">rate</th>
-    <th class="num" style="width:96px">新增播放</th><th class="num" style="width:80px">收藏</th><th class="num" style="width:80px">硬幣</th>
-    <th class="num" style="width:80px">點讚</th><th class="num" style="width:62px">在榜</th><th class="num" style="width:62px">最高</th>
-    <th style="width:110px" title="連續在榜第幾週；正好連續三週後掉榜即「三周效應」（又稱棉花糖效應）">連續</th>
-    <th style="width:150px">效應</th></tr></thead><tbody>` +
+    <th class="hm" style="width:170px">歌姬 / 作曲家</th><th class="mid hm" style="width:88px">上期</th><th class="num" style="width:110px">官方得分</th>
+    <th class="num hm" style="width:74px" title="rate：官方公布的得分與上期相比的增減">rate</th>
+    <th class="num hm" style="width:96px">新增播放</th><th class="num hm" style="width:80px">收藏</th><th class="num hm" style="width:80px">硬幣</th>
+    <th class="num hm" style="width:80px">點讚</th><th class="num hm" style="width:62px">在榜</th><th class="num hm" style="width:62px">最高</th>
+    <th class="hm" style="width:110px" title="連續在榜第幾週；正好連續三週後掉榜即「三周效應」（又稱棉花糖效應）">連續</th>
+    <th class="hs" style="width:150px">效應</th></tr></thead><tbody>` +
     d.entries.map(e => `<tr><td class="mid">${rk(e.rank)}</td><td>${cover(e)}</td><td>${titleCell(e)}</td>
-      <td>${tags(e.vocalists, 's')}${tags(e.producers, 'p')}</td><td class="mid">${state.board === 3 ? '—' : chg(offChg(e))}</td>
-      <td class="num"><b>${nf(e.score)}</b></td><td class="num">${offRate(e.score_ratio)}</td>
-      <td class="num">${nf(e.views)}</td><td class="num">${nf(e.favorites)}</td>
-      <td class="num">${nf(e.coins)}</td><td class="num">${nf(e.likes)}</td><td class="num">${e.weeks_on_board ?? '—'}</td><td class="num">${e.peak_rank ?? '—'}</td>
-      <td>${e.run ? (e.run.effect ? `<span class="tag w3">${esc(e.run.effect)}</span>`
+      <td class="hm">${tags(e.vocalists, 's')}${tags(e.producers, 'p')}</td><td class="mid hm">${state.board === 3 ? '—' : chg(offChg(e))}</td>
+      <td class="num"><b>${nf(e.score)}</b></td><td class="num hm">${offRate(e.score_ratio)}</td>
+      <td class="num hm">${nf(e.views)}</td><td class="num hm">${nf(e.favorites)}</td>
+      <td class="num hm">${nf(e.coins)}</td><td class="num hm">${nf(e.likes)}</td><td class="num hm">${e.weeks_on_board ?? '—'}</td><td class="num hm">${e.peak_rank ?? '—'}</td>
+      <td class="hm">${e.run ? (e.run.effect ? `<span class="tag w3">${esc(e.run.effect)}</span>`
         : `<span class="muted">第 ${e.run.week} / ${e.run.weeks} 週</span>`) : '—'}</td>
-      <td>${(e.effects || []).map(x => `<span class="tag w3">${esc(x)}</span>`).join('')
+      <td class="hs">${(e.effects || []).map(x => `<span class="tag w3">${esc(x)}</span>`).join('')
         || (e.special_status ? `<span class="tag">${esc(e.special_status)}</span>` : '')}</td></tr>`).join('')
     + subRows(d.sub) + '</tbody>';
 }
@@ -425,17 +428,17 @@ function subRows(sub) {
   return `<tr class="subhead"><td colspan="15">官方副榜　第 ${sub[0].rank}–${sub[sub.length - 1].rank} 名
     <span class="muted">（出自該期 B 站專欄的「部分数据」表，官方影片未公布）</span></td></tr>`
     + sub.map(e => `<tr class="subrow"><td class="mid">${rk(e.rank)}</td><td>${cover(e)}</td><td>${titleCell(e)}</td>
-      <td>${esc(e.vocalists || '')}${e.producer ? `<span class="muted"> / ${esc(e.producer)}</span>` : ''}</td>
-      <td class="mid">${!e.prev_known ? '<span class="muted" title="本站沒有上一期的副榜資料，無法判斷">—</span>'
+      <td class="hm">${esc(e.vocalists || '')}${e.producer ? `<span class="muted"> / ${esc(e.producer)}</span>` : ''}</td>
+      <td class="mid hm">${!e.prev_known ? '<span class="muted" title="本站沒有上一期的副榜資料，無法判斷">—</span>'
         : chg(e.prev_rank
           ? { kind: e.prev_rank === e.rank ? 'same' : (e.prev_rank > e.rank ? 'up' : 'down'),
               prev: e.prev_rank, diff: e.prev_rank - e.rank }
           : { kind: (e.weeks_on_board || 0) > 1 ? 're' : 'new' })}</td>
-      <td class="num"><b>${nf(e.score)}</b></td><td class="num">${offRate(e.score_ratio)}</td>
-      <td class="num">${nf(e.views)}</td><td class="num">${nf(e.favorites)}</td>
-      <td class="num">${nf(e.coins)}</td><td class="num">${nf(e.likes)}</td>
-      <td class="num">${e.weeks_on_board ?? '—'}</td><td class="num">${e.peak_rank ?? '—'}</td><td>—</td>
-      <td>${(e.effects || []).map(x => `<span class="tag w3">${esc(x)}</span>`).join('')}</td></tr>`).join('');
+      <td class="num"><b>${nf(e.score)}</b></td><td class="num hm">${offRate(e.score_ratio)}</td>
+      <td class="num hm">${nf(e.views)}</td><td class="num hm">${nf(e.favorites)}</td>
+      <td class="num hm">${nf(e.coins)}</td><td class="num hm">${nf(e.likes)}</td>
+      <td class="num hm">${e.weeks_on_board ?? '—'}</td><td class="num hm">${e.peak_rank ?? '—'}</td><td class="hm">—</td>
+      <td class="hs">${(e.effects || []).map(x => `<span class="tag w3">${esc(x)}</span>`).join('')}</td></tr>`).join('');
 }
 
 /* ------------------------------------------------------------------ 收錄曲庫 */

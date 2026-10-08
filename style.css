@@ -227,36 +227,26 @@ pre.log{background:var(--bg);border:1px solid var(--line);border-radius:10px;pad
   #pillWindow{display:none}
   #btnRefresh{grid-column:1 / -1;grid-row:3;justify-self:start}
   #btnExport{display:none}
-  /* 榜單在手機保留決策所需欄位；完整資料仍可在較寬螢幕檢視。 */
-  #tblWeekly,#tblLegend{min-width:0}
-  #tblWeekly th:nth-child(4),#tblWeekly td:nth-child(4),
-  #tblWeekly th:nth-child(5),#tblWeekly td:nth-child(5),
-  #tblWeekly th:nth-child(6),#tblWeekly td:nth-child(6),
-  #tblWeekly th:nth-child(7),#tblWeekly td:nth-child(7),
-  #tblWeekly th:nth-child(8),#tblWeekly td:nth-child(8),
-  #tblWeekly th:nth-child(10),#tblWeekly td:nth-child(10),
-  #tblWeekly th:nth-child(11),#tblWeekly td:nth-child(11),
-  #tblWeekly th:nth-child(12),#tblWeekly td:nth-child(12),
-  #tblWeekly th:nth-child(13),#tblWeekly td:nth-child(13),
-  #tblWeekly th:nth-child(14),#tblWeekly td:nth-child(14),
-  #tblWeekly th:nth-child(15),#tblWeekly td:nth-child(15),
-  #tblLegend th:nth-child(4),#tblLegend td:nth-child(4),
-  #tblLegend th:nth-child(5),#tblLegend td:nth-child(5),
-  #tblLegend th:nth-child(6),#tblLegend td:nth-child(6),
-  #tblLegend th:nth-child(7),#tblLegend td:nth-child(7),
-  #tblLegend th:nth-child(8),#tblLegend td:nth-child(8),
-  #tblLegend th:nth-child(10),#tblLegend td:nth-child(10),
-  #tblLegend th:nth-child(11),#tblLegend td:nth-child(11),
-  #tblLegend th:nth-child(12),#tblLegend td:nth-child(12),
-  #tblLegend th:nth-child(13),#tblLegend td:nth-child(13),
-  #tblLegend th:nth-child(14),#tblLegend td:nth-child(14),
-  #tblLegend th:nth-child(15),#tblLegend td:nth-child(15){display:none}
-  #tblWeekly th,#tblWeekly td,#tblLegend th,#tblLegend td{padding:8px 6px}
-  #tblWeekly .cv,#tblLegend .cv{width:56px;height:35px}
-  #tblWeekly .tt,#tblLegend .tt{max-width:130px;font-size:12.5px}
-  #tblWeekly .tt small,#tblLegend .tt small{font-size:10.5px}
-  #tblWeekly .meth,#tblLegend .meth{font-size:10px;padding:2px 4px}
+  /* 標題列在手機是 sticky 的，整塊會一直佔著畫面 —— 副標只是說明文字，收掉 */
+  .brand .sub{display:none}
+  .logo{font-size:17px}
+  nav button{padding:9px 11px;font-size:13px}
+
+  /* 榜單在手機保留決策所需欄位（名次／封面／曲名／得分）；完整資料仍可在較寬螢幕檢視。
+     要藏哪些欄位由 app.js 在格子上標 .hm / .hs 決定 —— 以前在這裡用 nth-child 列索引，
+     表格一加欄位就整排錯位（曾經藏掉「預測得分」卻留著「估計法」）。 */
+  table{min-width:0}
+  .hm{display:none}
+  th,td{padding:8px 6px}
+  .cv{width:56px;height:35px}
+  .tt{max-width:none;font-size:12.5px}
+  .tt small{font-size:10.5px}
+  .meth{font-size:10px;padding:2px 4px}
+  /* 統計數字卡片一行一張太浪費高度，改成兩欄 */
+  .grid.g4{grid-template-columns:1fr 1fr}
+  .stat .v{font-size:18px}
 }
+@media (max-width:480px){ .hs{display:none} }
 @media (max-width:900px){ .split{grid-template-columns:1fr} main{padding:12px} .hwrap{padding:10px 12px 0} }
 .issuelist{max-height:640px;overflow:auto;border:1px solid var(--line);border-radius:11px}
 .issuelist div.it{padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:12.8px}
