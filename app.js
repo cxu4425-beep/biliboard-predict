@@ -26,7 +26,9 @@ const dt = (t, f) => {
 const bili = bv => 'https://www.bilibili.com/video/' + bv;
 /* 封面圖來自 B 站（hdslb.com）。嵌在 Artifact 裡時外站圖片會被 CSP 擋掉，
    這時改畫一個中性色塊，版面不會因為破圖而跑掉。 */
-const coverOf = x => x.cover || ('https://biliboard.uk/api/provider/biliimg/bvid/' + x.bvid);
+// B 站 API 回來的封面網址是 http://，而公開版走 https —— 混合內容會被瀏覽器擋掉。
+const coverOf = x => (x.cover || ('https://biliboard.uk/api/provider/biliimg/bvid/' + x.bvid))
+  .replace(/^http:\/\//, 'https://');
 const rk = n => `<span class="rk ${n <= 3 ? 'r' + n : ''}">${n ?? '—'}</span>`;
 const tags = (arr, cls) => (arr || []).map(t => `<span class="tag ${cls}">${esc(t)}</span>`).join('');
 const catTag = c => c ? `<span class="tag c-${c}">${esc(c)}</span>` : '';
