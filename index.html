@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>術力口週榜預測 · Biliboard 規則｜非官方快照</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🎼</text></svg>">
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="brand">
+      <div class="logo">術力口週榜預測</div>
+      <div class="sub">依 Biliboard 术力口周榜（Bili-Board_Atel）官方規則 · 下一期預測與全歷史資料</div>
+      <div class="spacer"></div>
+      <span class="pill"><span class="dot" id="dot"></span><span id="statusText">載入中…</span></span>
+      <span class="pill" id="pillWindow">—</span>
+      </div>
+    <div class="snapnote">這是 <b>非官方</b>的預測站，與 Biliboard 製作組沒有任何關係。榜單原始資料來自 <a href="https://biliboard.uk" target="_blank" rel="noopener">Biliboard 官方網站</a>與其各期 B 站專欄；預測、準確度與各種「效應」標記是本站自行計算的。<br>這一份是靜態快照，資料截至 <b>2026-10-08 21:49</b>，不會自動更新。</div>
+    <nav id="nav">
+      <button data-p="weekly" class="on">週榜預測 TOP40</button>
+      <button data-p="legend">傳說曲週榜 TOP40</button>
+      <button data-p="half">半年榜 TOP20</button>
+      <button data-p="annual">年榜 TOP20</button>
+      <button data-p="milestones">達成預測</button>
+      <button data-p="history">歷史榜單</button>
+      <button data-p="accuracy">預測準確度</button>
+      <button data-p="data">規則 · 資料 · Excel</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="panel on" id="p-weekly">
+    <div class="grid g4" id="weeklyStats" style="margin-bottom:16px"></div>
+    <div class="hint" id="weeklyHint"></div>
+    <div class="card">
+      <h2 id="weeklyTitle">週榜預測</h2>
+      <div class="tw"><table id="tblWeekly"><tbody><tr><td class="loading"><span class="spin"></span>計算中…</td></tr></tbody></table></div>
+    </div>
+    <div class="card" id="cardEffect" style="display:none">
+      <h2>效應觀察 <small>一周效應　·　三周效應（棉花糖效應）　·　電梯　·　白月光回榜　·　本家效應　|　<span id="effectCount"></span></small></h2>
+      <div class="tw"><table id="tblEffect"></table></div>
+    </div>
+    <div class="card" id="cardExc" style="display:none">
+      <h2>依收錄範圍剔除 <small id="excCount"></small><span class="spacer"></span><button id="btnExc">展開 / 收合</button></h2>
+      <div class="tw" id="excWrap" style="display:none"><table id="tblExc"></table></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-legend">
+    <div class="hint" id="legendHint"></div>
+    <div class="card"><h2 id="legendTitle">傳說曲週榜預測</h2>
+      <div class="tw"><table id="tblLegend"><tbody><tr><td class="loading"><span class="spin"></span>計算中…</td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-half">
+    <div class="hint" id="halfHint"></div>
+    <div class="card"><h2 id="halfTitle">半年榜預測</h2>
+      <div class="tw"><table id="tblHalf"><tbody><tr><td class="loading"><span class="spin"></span>計算中…</td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-annual">
+    <div class="hint" id="annualHint"></div>
+    <div class="card"><h2 id="annualTitle">年榜預測</h2>
+      <div class="tw"><table id="tblAnnual"><tbody><tr><td class="loading"><span class="spin"></span>計算中…</td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-history">
+    <div class="hint">資料直接來自 Biliboard 官方網站 API：週榜 ♪2 至今、傳說曲週榜 ♪1 至今、半年榜／年榜全部各期。分數為官方公布值。</div>
+    <div class="split">
+      <div>
+        <div class="card"><div class="body" style="padding:12px;display:flex;flex-direction:column;gap:8px">
+          <select id="histBoard"><option value="1">週榜</option><option value="2">傳說曲週榜</option><option value="3">半年榜／年榜</option></select>
+          <input type="text" id="issueSearch" placeholder="搜尋期數或冠軍曲…">
+        </div></div>
+        <div class="issuelist" id="issueList"></div>
+      </div>
+      <div class="card"><h2 id="issueTitle">請選擇一期</h2><div class="tw"><table id="tblIssue"></table></div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-milestones">
+    <div class="filters" style="margin-bottom:12px">
+      <label class="f">預測範圍<select id="msHorizon"><option value="14">14 天內</option><option value="30">30 天內</option>
+        <option value="60" selected>60 天內</option><option value="180">180 天內</option></select></label>
+    </div>
+    <div class="hint" id="msHint"></div>
+    <div id="msBody"><div class="loading"><span class="spin"></span>計算中…</div></div>
+  </section>
+
+  <section class="panel" id="p-accuracy">
+    <div class="grid g4" id="accStats" style="margin-bottom:16px"></div>
+    <div class="hint" id="accHint"></div>
+    <div class="card" id="accChartCard" hidden><h2>週榜前 20 名命中數 <small>每期截止前最後一次預測 vs 官方公布</small></h2>
+      <div class="body"><div class="vbox" id="accChart"></div></div></div>
+    <div class="card"><h2>歷期驗證</h2><div class="tw"><table id="tblAcc"><tbody><tr><td class="loading"><span class="spin"></span>載入中…</td></tr></tbody></table></div></div>
+    <div class="card"><h2 id="accDetailTitle">明細</h2><div class="tw"><table id="tblAccDetail"></table></div></div>
+    <div class="card"><h2>估計法自動校正 <small>各估計法的官方得分 ÷ 預測得分，以收縮估計回饋到下一期預測</small></h2>
+      <div class="tw"><table id="tblCal"></table></div></div>
+    <div class="card"><h2>保守方法回測（對照）</h2><div class="body" id="accBaseline"></div></div>
+  </section>
+
+  <section class="panel" id="p-data">
+    <div class="grid g4" id="dataStats" style="margin-bottom:16px"></div>
+    <div class="card"><h2>Excel 檔案 <small>隨資料更新自動覆寫，點擊下載</small></h2><div class="body"><div class="files" id="fileList"></div></div></div>
+    <div class="card"><h2>計分與收錄規則</h2><div class="body" id="ruleBox"></div></div>
+    <div class="card"><h2>預測方法與準確度</h2><div class="body" id="methodBox"></div></div>
+    <div class="card"><h2>執行紀錄</h2><div class="body"><pre class="log" id="logBox">—</pre></div></div>
+  </section>
+</main>
+
+<footer>
+  規則與歷史榜單：Biliboard 术力口周榜官方網站 <a href="https://biliboard.uk/" target="_blank" rel="noopener">biliboard.uk</a> 公開 API、
+  官方說明頁 <a href="https://voca.wiki/Biliboard%E6%9C%AF%E5%8A%9B%E5%8F%A3%E5%91%A8%E6%A6%9C" target="_blank" rel="noopener">voca.wiki</a>；即時數據：bilibili 公開 API。<br>
+  本站為非官方預測工具，預測值不代表 Bili-Board_Atel 的正式結果。
+</footer>
+<div class="modal" id="songModal" hidden>
+  <div class="mbd" data-close></div>
+  <div class="mbox"><button class="mx" data-close title="關閉">×</button><div id="songBody"></div></div>
+</div>
+
+<script src="static.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
