@@ -242,7 +242,8 @@ pre.log{background:var(--bg);border:1px solid var(--line);border-radius:10px;pad
   th.c-rk{width:38px!important}
   th.c-cv{width:62px!important}
   .cv{width:56px;height:35px}
-  .tt{max-width:none;font-size:12.5px}
+  /* 不能設 none：表格是自動版面，曲名沒有上限時整張表會被最長的那首撐寬 */
+  .tt{max-width:46vw;font-size:12.5px}
   .tt small{font-size:10.5px}
   .meth{font-size:10px;padding:2px 4px}
   /* 統計數字卡片一行一張太浪費高度，改成兩欄 */

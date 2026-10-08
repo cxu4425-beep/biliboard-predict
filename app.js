@@ -328,26 +328,26 @@ async function loadWeekly() {
   $('#cardEffect').style.display = ef.length ? '' : 'none';
   if (ef.length) {
     $('#effectCount').textContent = `${ef.length} 首本期可能出現效應`;
-    $('#tblEffect').innerHTML = `<thead><tr><th style="width:92px">封面</th><th>曲名</th>
-      <th style="width:150px">歌姬 / 作曲家</th><th class="mid" style="width:100px">效應</th>
-      <th class="mid" style="width:96px">本期預測</th><th class="num" style="width:100px">預測得分</th>
-      <th>說明</th></tr></thead><tbody>` +
+    $('#tblEffect').innerHTML = `<thead><tr><th class="c-cv" style="width:92px">封面</th><th>曲名</th>
+      <th class="hm" style="width:150px">歌姬 / 作曲家</th><th class="mid" style="width:100px">效應</th>
+      <th class="mid hs" style="width:96px">本期預測</th><th class="num hm" style="width:100px">預測得分</th>
+      <th class="hm">說明</th></tr></thead><tbody>` +
       ef.map(x => `<tr><td>${cover(x)}</td><td>${titleCell(x)}</td>
-        <td>${tags(x.vocalists, 's')}${tags(x.producers, 'p')}</td>
+        <td class="hm">${tags(x.vocalists, 's')}${tags(x.producers, 'p')}</td>
         <td class="mid">${x.effect === false ? `<span class="muted">${esc(x.watch)}</span>`
           : `<span class="tag w3">${esc(x.watch)}</span>`}</td>
-        <td class="mid">${x.rank <= 20 ? '#' + x.rank : '<span class="chg dn">' + x.rank + ' 名（榜外）</span>'}</td>
-        <td class="num">${nf(x.score)}</td>
-        <td class="muted">${esc(x.note || '')}${x.effect === false ? '　→ 預測續榜，不成立' : ''}</td></tr>`).join('') +
+        <td class="mid hs">${x.rank <= 20 ? '#' + x.rank : '<span class="chg dn">' + x.rank + ' 名（榜外）</span>'}</td>
+        <td class="num hm">${nf(x.score)}</td>
+        <td class="muted hm">${esc(x.note || '')}${x.effect === false ? '　→ 預測續榜，不成立' : ''}</td></tr>`).join('') +
       '</tbody>';
   }
   if (d.excluded && d.excluded.length) {
     $('#cardExc').style.display = '';
     $('#excCount').textContent = `官方收錄池內共 ${d.excluded_count} 首近期曲目因不符本站收錄範圍被剔除（僅列前 ${d.excluded.length}）`;
-    $('#tblExc').innerHTML = `<thead><tr><th style="width:92px">封面</th><th>曲名</th><th style="width:160px">歌姬 / 作曲家</th>
-      <th class="num" style="width:100px">累計播放</th><th style="width:300px">剔除理由</th></tr></thead><tbody>` +
-      d.excluded.map(x => `<tr><td>${cover(x)}</td><td>${titleCell(x)}</td><td>${tags(x.vocalists, 's')}${tags(x.producers, 'p')}</td>
-        <td class="num">${nf(x.views)}</td><td>${(x.exclude_reasons || []).map(r => `<span class="tag">${esc(r)}</span>`).join('')}</td></tr>`).join('') + '</tbody>';
+    $('#tblExc').innerHTML = `<thead><tr><th class="c-cv" style="width:92px">封面</th><th>曲名</th><th class="hm" style="width:160px">歌姬 / 作曲家</th>
+      <th class="num hm" style="width:100px">累計播放</th><th style="width:300px">剔除理由</th></tr></thead><tbody>` +
+      d.excluded.map(x => `<tr><td>${cover(x)}</td><td>${titleCell(x)}</td><td class="hm">${tags(x.vocalists, 's')}${tags(x.producers, 'p')}</td>
+        <td class="num hm">${nf(x.views)}</td><td>${(x.exclude_reasons || []).map(r => `<span class="tag">${esc(r)}</span>`).join('')}</td></tr>`).join('') + '</tbody>';
   } else $('#cardExc').style.display = 'none';
 }
 
@@ -588,16 +588,16 @@ async function loadAccuracy() {
     yMin: 0, yMax: 20, yTicks: [0, 5, 10, 15, 20], dots: true, height: 180,
     xFmt: x => '♪' + x, xFmtTip: x => '週榜 ♪' + x, yFmt: v => String(v), title: '週榜前 20 名命中數' });
   $('#tblAcc').innerHTML = `<thead><tr><th style="width:110px">榜別</th><th class="mid" style="width:64px">期數</th>
-    <th style="width:140px">截止前預測時間</th><th class="num" style="width:96px">前 20 名命中</th><th class="num" style="width:96px">前 10 名命中</th>
-    <th class="num" style="width:100px">名次完全正確</th><th class="num" style="width:100px">名次平均誤差</th>
-    <th class="num" style="width:120px" title="|預測得分 ÷ 官方得分 − 1| 的中位數">得分誤差中位數</th>
-    <th class="num" style="width:110px" title="拿官方副榜（第 21–40 名）一起比對；只有已轉錄副榜的期數才有">前 40 名命中</th>
-    <th class="mid" style="width:80px">冠軍</th><th style="width:70px"></th></tr></thead><tbody>` +
-    (ev.length ? ev.map((e, i) => `<tr><td>${BOARD_NAME[e.board_id]}</td><td class="mid">♪${e.issue_id}</td><td class="muted">${dt(e.generated_at)}</td>
-      <td class="num"><b>${e.hits}</b> / ${e.published}</td><td class="num">${e.hits10} / 10</td><td class="num">${e.exact}</td>
-      <td class="num">${e.rank_mae ?? '—'}</td><td class="num">${e.score_err_median !== null ? (e.score_err_median * 100).toFixed(1) + '%' : '—'}</td>
-      <td class="num">${e.wide ? `${e.wide.hits} / ${e.wide.published}<small class="muted"> 誤差 ${e.wide.rank_mae}</small>` : '<span class="muted">—</span>'}</td>
-      <td class="mid">${e.champion ? '<span class="chg up">命中</span>' : '<span class="chg dn">未中</span>'}</td>
+    <th class="hm" style="width:140px">截止前預測時間</th><th class="num" style="width:96px">前 20 名命中</th><th class="num hm" style="width:96px">前 10 名命中</th>
+    <th class="num hm" style="width:100px">名次完全正確</th><th class="num hm" style="width:100px">名次平均誤差</th>
+    <th class="num hm" style="width:120px" title="|預測得分 ÷ 官方得分 − 1| 的中位數">得分誤差中位數</th>
+    <th class="num hm" style="width:110px" title="拿官方副榜（第 21–40 名）一起比對；只有已轉錄副榜的期數才有">前 40 名命中</th>
+    <th class="mid hs" style="width:80px">冠軍</th><th style="width:70px"></th></tr></thead><tbody>` +
+    (ev.length ? ev.map((e, i) => `<tr><td>${BOARD_NAME[e.board_id]}</td><td class="mid">♪${e.issue_id}</td><td class="muted hm">${dt(e.generated_at)}</td>
+      <td class="num"><b>${e.hits}</b> / ${e.published}</td><td class="num hm">${e.hits10} / 10</td><td class="num hm">${e.exact}</td>
+      <td class="num hm">${e.rank_mae ?? '—'}</td><td class="num hm">${e.score_err_median !== null ? (e.score_err_median * 100).toFixed(1) + '%' : '—'}</td>
+      <td class="num hm">${e.wide ? `${e.wide.hits} / ${e.wide.published}<small class="muted"> 誤差 ${e.wide.rank_mae}</small>` : '<span class="muted">—</span>'}</td>
+      <td class="mid hs">${e.champion ? '<span class="chg up">命中</span>' : '<span class="chg dn">未中</span>'}</td>
       <td><button data-acc="${i}">明細</button></td></tr>`).join('')
       : `<tr><td class="loading" colspan="11">尚無可驗證的期數${pend.length ? `（♪${pend[0].issue_id} 發布後出現第一筆）` : ''}</td></tr>`) + '</tbody>';
   state.acc = ev;
@@ -605,10 +605,10 @@ async function loadAccuracy() {
   else { $('#accDetailTitle').textContent = '明細'; $('#tblAccDetail').innerHTML = ''; }
   const cal = Object.entries(d.calibration || {});
   $('#tblCal').innerHTML = `<thead><tr><th style="width:160px">估計法</th><th class="num" style="width:90px">樣本</th>
-    <th class="num" style="width:150px">官方 ÷ 預測（原始）</th><th class="num" style="width:110px">套用倍率</th><th>狀態</th></tr></thead><tbody>` +
+    <th class="num hm" style="width:150px">官方 ÷ 預測（原始）</th><th class="num" style="width:110px">套用倍率</th><th class="hm">狀態</th></tr></thead><tbody>` +
     (cal.length ? cal.map(([m, c]) => `<tr><td><span class="meth ${methCls(m)}">${METH[m] || esc(m)}</span></td><td class="num">${c.n}</td>
-      <td class="num">×${c.raw}</td><td class="num"><b>×${c.factor}</b></td>
-      <td>${c.active ? '<span class="tag e">校正中</span>' : `<span class="muted">樣本不足（需 ${d.cal_min_n} 筆）</span>`}</td></tr>`).join('')
+      <td class="num hm">×${c.raw}</td><td class="num"><b>×${c.factor}</b></td>
+      <td class="hm">${c.active ? '<span class="tag e">校正中</span>' : `<span class="muted">樣本不足（需 ${d.cal_min_n} 筆）</span>`}</td></tr>`).join('')
       : `<tr><td class="loading" colspan="5">目前模型版本（${esc(d.model_ver || '')}）還沒有實測樣本，暫不校正。
           校正係數只採用同一版模型的誤差 —— 模型修掉某個偏差之後，再套用舊版擬出來的係數會反向過度修正。
           每個估計法累積 ${d.cal_min_n} 筆後開始校正。${(d.evaluated_vers || []).length ?
@@ -623,25 +623,25 @@ function accDetail(i) {
   $('#accDetailTitle').innerHTML = `${BOARD_NAME[e.board_id]} ♪${e.issue_id} 明細 <small>預測時間 ${dt(e.generated_at)}　·　官方前 ${e.published} 名 vs 本站預測</small>`;
   const meth = m => m ? `<span class="meth ${methCls(m)}">${METH[m] || esc(m)}</span>` : '—';
   $('#tblAccDetail').innerHTML = `<thead><tr><th class="mid" style="width:70px">官方名次</th><th>曲名</th>
-    <th class="mid" style="width:84px">本站預測</th><th class="mid" style="width:90px">名次差</th>
-    <th class="num" style="width:110px">官方得分</th><th class="num" style="width:110px">預測得分</th>
-    <th class="num" style="width:96px" title="預測 ÷ 官方 − 1；正值為高估">得分誤差</th><th class="mid" style="width:120px">估計法</th></tr></thead><tbody>` +
+    <th class="mid" style="width:84px">本站預測</th><th class="mid hs" style="width:90px">名次差</th>
+    <th class="num hm" style="width:110px">官方得分</th><th class="num hm" style="width:110px">預測得分</th>
+    <th class="num hm" style="width:96px" title="預測 ÷ 官方 − 1；正值為高估">得分誤差</th><th class="mid hm" style="width:120px">估計法</th></tr></thead><tbody>` +
     e.detail.map(x => {
       const dd = x.pred_rank ? x.pred_rank - x.official_rank : null;
       return `<tr><td class="mid">${rk(x.official_rank)}</td><td>${titleCell(x)}</td>
         <td class="mid">${x.pred_rank ? '#' + x.pred_rank : '<span class="chg dn">40 名外</span>'}</td>
-        <td class="mid">${dd === null ? '—' : dd === 0 ? '<span class="chg up">完全正確</span>' : (dd > 0 ? '+' : '') + dd}</td>
-        <td class="num"><b>${nf(x.official_score)}</b></td><td class="num">${nf(x.pred_score)}</td>
-        <td class="num">${x.score_err === undefined ? '—' : (x.score_err >= 0 ? '+' : '') + (x.score_err * 100).toFixed(1) + '%'}</td>
-        <td class="mid">${meth(x.method)}</td></tr>`;
+        <td class="mid hs">${dd === null ? '—' : dd === 0 ? '<span class="chg up">完全正確</span>' : (dd > 0 ? '+' : '') + dd}</td>
+        <td class="num hm"><b>${nf(x.official_score)}</b></td><td class="num hm">${nf(x.pred_score)}</td>
+        <td class="num hm">${x.score_err === undefined ? '—' : (x.score_err >= 0 ? '+' : '') + (x.score_err * 100).toFixed(1) + '%'}</td>
+        <td class="mid hm">${meth(x.method)}</td></tr>`;
     }).join('') +
     (e.false_positives.length ? `<tr><td colspan="8" class="muted" style="padding-top:14px">預測進前 ${e.published} 名、但官方未上榜：</td></tr>` +
       e.false_positives.map(f => `<tr><td class="mid muted">${f.sub_rank ? '副 ' + f.sub_rank : '—'}</td><td>${titleCell(f)}</td>
-        <td class="mid">#${f.pred_rank}</td><td class="mid">${f.sub_rank ? (f.pred_rank - f.sub_rank > 0 ? '+' : '') + (f.pred_rank - f.sub_rank) : '—'}</td>
-        <td class="num${f.sub_score ? '' : ' muted'}" title="${f.sub_score ? '官方副榜公布的得分' : '官方未公布，只知道低於第 ' + e.published + ' 名'}">${f.sub_score ? nf(f.sub_score) : '&lt; ' + nf(f.official_below)}</td>
-        <td class="num">${nf(f.pred_score)}</td>
-        <td class="num">${f.sub_score ? ((f.pred_score / f.sub_score - 1) * 100).toFixed(1) + '%' : '—'}</td>
-        <td class="mid">${meth(f.method)}</td></tr>`).join('') : '') +
+        <td class="mid">#${f.pred_rank}</td><td class="mid hs">${f.sub_rank ? (f.pred_rank - f.sub_rank > 0 ? '+' : '') + (f.pred_rank - f.sub_rank) : '—'}</td>
+        <td class="num hm${f.sub_score ? '' : ' muted'}" title="${f.sub_score ? '官方副榜公布的得分' : '官方未公布，只知道低於第 ' + e.published + ' 名'}">${f.sub_score ? nf(f.sub_score) : '&lt; ' + nf(f.official_below)}</td>
+        <td class="num hm">${nf(f.pred_score)}</td>
+        <td class="num hm">${f.sub_score ? ((f.pred_score / f.sub_score - 1) * 100).toFixed(1) + '%' : '—'}</td>
+        <td class="mid hm">${meth(f.method)}</td></tr>`).join('') : '') +
     '</tbody>';
 }
 
@@ -652,12 +652,12 @@ function msText(x) {
 }
 function msRow(x, done) {
   const pct = Math.min(100, x.progress * 100), days = x.eta ? (x.eta - Date.now() / 1000) / 86400 : null;
-  return `<tr><td>${cover(x)}</td><td>${titleCell(x)}</td><td>${tags(x.vocalists, 's')}${tags(x.producers, 'p')}</td>
-    <td><div class="meter"><i style="width:${pct.toFixed(1)}%"></i></div><small class="muted">${nf(x.views)} / ${compact(x.threshold)}　${pct.toFixed(1)}%</small></td>
-    <td class="num">${done ? '—' : nf(x.remain)}</td><td class="num">${x.rate_day ? '+' + nf(x.rate_day) : '—'}</td>
+  return `<tr><td>${cover(x)}</td><td>${titleCell(x)}</td><td class="hm">${tags(x.vocalists, 's')}${tags(x.producers, 'p')}</td>
+    <td class="hs"><div class="meter"><i style="width:${pct.toFixed(1)}%"></i></div><small class="muted">${nf(x.views)} / ${compact(x.threshold)}　${pct.toFixed(1)}%</small></td>
+    <td class="num hm">${done ? '—' : nf(x.remain)}</td><td class="num hm">${x.rate_day ? '+' + nf(x.rate_day) : '—'}</td>
     <td>${done ? `<span class="tag e">已達成</span> <span class="muted">${dt(x.achieved_at)}</span>`
       : `<b>${dt(x.eta, 'd')}</b> <span class="muted">${days < 1 ? '1 天內' : '約 ' + Math.round(days) + ' 天'}</span>${x.in_window ? ' <span class="tag m">本期內</span>' : ''}`}</td>
-    <td class="mid muted">${esc(x.method || '—')}</td></tr>`;
+    <td class="mid muted hm">${esc(x.method || '—')}</td></tr>`;
 }
 async function loadMilestones() {
   const d = await api('/api/milestones?horizon=' + ($('#msHorizon').value || 60));
@@ -665,9 +665,9 @@ async function loadMilestones() {
     推算累計播放抵達門檻的日期；只列 ${d.horizon_days} 天內預計達成者，每個門檻最多顯示 50 首。
     標 <span class="tag m">本期內</span> 表示預計在本期統計時段（${dt(d.window.end)} 截止）前達成。`;
   $('#msBody').innerHTML = d.boards.map(b => `<div class="card"><h2>${esc(b.label)} <small>累計播放 ${compact(b.threshold)}　·　${d.horizon_days} 天內預計 ${b.upcoming.length} 首達成${b.achieved.length ? `、近期已達成 ${b.achieved.length} 首` : ''}</small></h2>
-    <div class="tw"><table><thead><tr><th style="width:92px">封面</th><th>曲名</th><th style="width:170px">歌姬 / 作曲家</th>
-      <th style="width:210px">進度</th><th class="num" style="width:100px">還差</th><th class="num" style="width:96px">目前日增</th>
-      <th style="width:170px">預計達成</th><th class="mid" style="width:100px">估計法</th></tr></thead><tbody>` +
+    <div class="tw"><table><thead><tr><th class="c-cv" style="width:92px">封面</th><th>曲名</th><th class="hm" style="width:170px">歌姬 / 作曲家</th>
+      <th class="hs" style="width:210px">進度</th><th class="num hm" style="width:100px">還差</th><th class="num hm" style="width:96px">目前日增</th>
+      <th style="width:170px">預計達成</th><th class="mid hm" style="width:100px">估計法</th></tr></thead><tbody>` +
     (b.achieved.map(x => msRow(x, true)).join('') + b.upcoming.slice(0, 50).map(x => msRow(x)).join('')
       || `<tr><td class="loading" colspan="8">${d.horizon_days} 天內沒有預計達成的曲目</td></tr>`) + '</tbody></table></div></div>').join('');
 }
