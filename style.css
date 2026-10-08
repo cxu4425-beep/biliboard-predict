@@ -238,6 +238,9 @@ pre.log{background:var(--bg);border:1px solid var(--line);border-radius:10px;pad
   table{min-width:0}
   .hm{display:none}
   th,td{padding:8px 6px}
+  /* 表頭的 width 是行內樣式，要 !important 才壓得過；省下來的寬度全給曲名 */
+  th.c-rk{width:38px!important}
+  th.c-cv{width:62px!important}
   .cv{width:56px;height:35px}
   .tt{max-width:none;font-size:12.5px}
   .tt small{font-size:10.5px}

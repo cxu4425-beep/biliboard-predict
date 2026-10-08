@@ -267,7 +267,7 @@ async function loadStatus() {
    以前是在 style.css 用 nth-child 列索引，表格一加欄位索引就錯位 ——
    實際發生過：藏掉了最重要的「預測得分」，卻留著「時間修正」「估計法」。 */
 const WEEK_HEAD = `<thead><tr>
-  <th class="mid" style="width:54px">名次</th><th style="width:92px">封面</th><th>曲名</th>
+  <th class="mid c-rk" style="width:54px">名次</th><th class="c-cv" style="width:92px">封面</th><th>曲名</th>
   <th class="hm" style="width:170px">歌姬 / 作曲家</th><th class="mid hm" style="width:62px">類別</th>
   <th class="mid hm" style="width:88px">上期</th>
   <th class="num hm" style="width:54px" title="主榜在榜次數（含本期，若本期進主榜）">在榜</th>
@@ -360,7 +360,7 @@ async function loadLegend() {
 }
 
 /* ------------------------------------------------------------------ 半年 / 年榜 */
-const PER_HEAD = `<thead><tr><th class="mid" style="width:54px">名次</th><th style="width:92px">封面</th><th>曲名</th>
+const PER_HEAD = `<thead><tr><th class="mid c-rk" style="width:54px">名次</th><th class="c-cv" style="width:92px">封面</th><th>曲名</th>
   <th class="hm" style="width:170px">歌姬 / 作曲家</th><th class="mid hm" style="width:62px">類別</th>
   <th class="num" style="width:120px">預測總得分</th><th class="num hm" style="width:110px">官方已公布</th>
   <th class="num hm" style="width:96px">缺漏週估算</th><th class="num hm" style="width:96px">本週預測</th>
@@ -403,7 +403,7 @@ async function openIssue(n) {
   $('#issueTitle').innerHTML = `${BOARD_NAME[state.board]} ♪${n}
     <small>統計 ${dt(m.start_date, 'd')} → ${dt(m.end_date, 'd')}　·　${m.video_count} 首
     ${m.video_bvid ? `　·　<a href="${bili(m.video_bvid)}" target="_blank" rel="noopener">官方影片</a>` : ''}</small>`;
-  $('#tblIssue').innerHTML = `<thead><tr><th class="mid" style="width:54px">名次</th><th style="width:92px">封面</th><th>曲名</th>
+  $('#tblIssue').innerHTML = `<thead><tr><th class="mid c-rk" style="width:54px">名次</th><th class="c-cv" style="width:92px">封面</th><th>曲名</th>
     <th class="hm" style="width:170px">歌姬 / 作曲家</th><th class="mid hm" style="width:88px">上期</th><th class="num" style="width:110px">官方得分</th>
     <th class="num hm" style="width:74px" title="rate：官方公布的得分與上期相比的增減">rate</th>
     <th class="num hm" style="width:96px">新增播放</th><th class="num hm" style="width:80px">收藏</th><th class="num hm" style="width:80px">硬幣</th>
