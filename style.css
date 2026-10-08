@@ -249,6 +249,12 @@ pre.log{background:var(--bg);border:1px solid var(--line);border-radius:10px;pad
   /* 統計數字卡片一行一張太浪費高度，改成兩欄 */
   .grid.g4{grid-template-columns:1fr 1fr}
   .stat .v{font-size:18px}
+  /* 歌曲視窗：150px 的封面在 375px 寬度下會把右邊文字擠成一條 */
+  .modal{padding:12px 8px}
+  .mbox{max-height:94vh;padding:16px 14px 8px}
+  .shead{gap:10px;padding-right:34px}
+  .shead .cv{width:92px;height:58px}
+  .shead h2{font-size:17px}
 }
 @media (max-width:480px){ .hs{display:none} }
 @media (max-width:900px){ .split{grid-template-columns:1fr} main{padding:12px} .hwrap{padding:10px 12px 0} }

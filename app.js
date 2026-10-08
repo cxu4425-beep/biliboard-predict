@@ -719,20 +719,20 @@ function songHtml(s) {
   const h = s.history || [];
   const histRows = h.map(x => `<tr>
     <td>${BOARD_NAME[x.board_id] || x.board_id}</td><td class="mid">♪${x.issue_id}</td>
-    <td class="muted">${dt(x.end_date, 'd')}</td><td class="mid">${rk(x.rank)}</td>
-    <td class="mid">${chg(offChg(x))}</td><td class="num"><b>${nf(x.score)}</b></td>
-    <td class="num">${offRate(x.score_ratio)}</td><td class="num">${nf(x.views)}</td>
-    <td class="num">${nf(x.favorites)}</td><td class="num">${nf(x.coins)}</td><td class="num">${nf(x.likes)}</td>
-    <td class="num">${x.time_correction && x.board_id !== 3 ? x.time_correction.toFixed(2) : '—'}</td>
-    <td>${x.special_status ? `<span class="tag" title="官方特殊狀態">${esc(x.special_status)}</span>` : ''}${
+    <td class="muted hm">${dt(x.end_date, 'd')}</td><td class="mid">${rk(x.rank)}</td>
+    <td class="mid hs">${chg(offChg(x))}</td><td class="num"><b>${nf(x.score)}</b></td>
+    <td class="num hm">${offRate(x.score_ratio)}</td><td class="num hm">${nf(x.views)}</td>
+    <td class="num hm">${nf(x.favorites)}</td><td class="num hm">${nf(x.coins)}</td><td class="num hm">${nf(x.likes)}</td>
+    <td class="num hm">${x.time_correction && x.board_id !== 3 ? x.time_correction.toFixed(2) : '—'}</td>
+    <td class="hm">${x.special_status ? `<span class="tag" title="官方特殊狀態">${esc(x.special_status)}</span>` : ''}${
       x.bvid !== s.bvid ? `<span class="tag" title="該期以此 BV 計分">${esc(x.bvid)}</span>` : ''}</td></tr>`).join('');
   const vs = (s.versions || []).slice().sort((a, b) => (b.views || 0) - (a.views || 0));
   const vers = vs.length > 1 ? `<div class="card"><h2>同一首歌的版本
       <small>Biliboard 每首歌只用一個 BV 計分：本家優先，否則播放最高</small></h2>
-    <div class="tw"><table><thead><tr><th style="width:120px">BV號</th><th>影片標題</th><th style="width:130px">UP主</th>
+    <div class="tw"><table><thead><tr><th class="hm" style="width:120px">BV號</th><th>影片標題</th><th class="hs" style="width:130px">UP主</th>
       <th class="num" style="width:100px">累計播放</th><th class="mid" style="width:90px">計分採用</th></tr></thead><tbody>` +
-    vs.map(v => `<tr><td><a href="${bili(v.bvid)}" target="_blank" rel="noopener">${esc(v.bvid)}</a></td>
-      <td>${esc(v.video_title || '—')}</td><td>${esc(v.owner_name || '—')}</td><td class="num">${nf(v.views)}</td>
+    vs.map(v => `<tr><td class="hm"><a href="${bili(v.bvid)}" target="_blank" rel="noopener">${esc(v.bvid)}</a></td>
+      <td>${esc(v.video_title || '—')}</td><td class="hs">${esc(v.owner_name || '—')}</td><td class="num">${nf(v.views)}</td>
       <td class="mid">${v.canonical ? '<span class="tag e">計分中</span>' : '<span class="muted">—</span>'}</td></tr>`).join('') +
     '</tbody></table></div></div>' : '';
   const sn = (s.snapshots || []).slice(0, 9);
@@ -740,7 +740,7 @@ function songHtml(s) {
     const p = sn[i + 1];
     return `<tr><td>${dt(x.ts)}</td><td class="num">${nf(x.views)}</td>
       <td class="num muted">${p ? '+' + nf(x.views - p.views) : '—'}</td>
-      <td class="num">${nf(x.favorites)}</td><td class="num">${nf(x.coins)}</td><td class="num">${nf(x.likes)}</td></tr>`;
+      <td class="num hm">${nf(x.favorites)}</td><td class="num hm">${nf(x.coins)}</td><td class="num hm">${nf(x.likes)}</td></tr>`;
   }).join('');
   return `<div class="shead">${cover(s)}
       <div><h2 style="margin:0">${esc(main)}</h2><div class="muted">${sub}</div>
@@ -766,18 +766,18 @@ function songHtml(s) {
       <div class="body">${s.runs.map(r => `<span class="runseg${r.effect ? ' w3' : ''}">${BOARD_NAME[r.board_id]}　♪${r.from}${r.weeks > 1 ? '–♪' + r.to : ''}　${r.weeks} 週${r.effect ? '　' + esc(r.effect) : (r.completed ? '' : '　進行中')}</span>`).join('')}</div></div>` : ''}
     <div class="card"><h2>在榜紀錄 <small>Biliboard 官方公布值，共 ${h.length} 筆</small></h2>
       <div class="tw"><table><thead><tr><th style="width:100px">榜別</th><th class="mid" style="width:60px">期數</th>
-        <th style="width:96px">截止日</th><th class="mid" style="width:54px">名次</th>
-        <th class="mid" style="width:82px">名次變化</th><th class="num" style="width:110px">官方得分</th>
-        <th class="num" style="width:74px">比上期</th><th class="num" style="width:96px">新增播放</th>
-        <th class="num" style="width:80px">收藏</th><th class="num" style="width:80px">硬幣</th>
-        <th class="num" style="width:80px">點讚</th><th class="num" style="width:64px">時間修正</th>
-        <th style="width:150px">備註</th></tr></thead>
+        <th class="hm" style="width:96px">截止日</th><th class="mid" style="width:54px">名次</th>
+        <th class="mid hs" style="width:82px">名次變化</th><th class="num" style="width:110px">官方得分</th>
+        <th class="num hm" style="width:74px">比上期</th><th class="num hm" style="width:96px">新增播放</th>
+        <th class="num hm" style="width:80px">收藏</th><th class="num hm" style="width:80px">硬幣</th>
+        <th class="num hm" style="width:80px">點讚</th><th class="num hm" style="width:64px">時間修正</th>
+        <th class="hm" style="width:150px">備註</th></tr></thead>
         <tbody>${histRows || '<tr><td class="loading" colspan="13">尚未上過榜</td></tr>'}</tbody></table></div></div>
     ${vers}
     ${sn.length ? `<div class="card"><h2>本站即時快照 <small>最近 ${sn.length} 筆</small></h2>
       <div class="tw"><table><thead><tr><th style="width:130px">時間</th><th class="num" style="width:110px">累計播放</th>
-        <th class="num" style="width:96px">較前次</th><th class="num" style="width:90px">收藏</th>
-        <th class="num" style="width:90px">硬幣</th><th class="num" style="width:90px">點讚</th></tr></thead>
+        <th class="num" style="width:96px">較前次</th><th class="num hm" style="width:90px">收藏</th>
+        <th class="num hm" style="width:90px">硬幣</th><th class="num hm" style="width:90px">點讚</th></tr></thead>
         <tbody>${snapRows}</tbody></table></div></div>` : ''}`;
 }
 async function openSong(bv) {
