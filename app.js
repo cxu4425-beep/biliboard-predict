@@ -286,7 +286,7 @@ const WEEK_HEAD = `<thead><tr>
 function weekRow(x, maxPt) {
   return `<tr title="${esc(x.detail || '')}">
     <td class="mid">${rk(x.rank)}</td><td>${cover(x)}</td>
-    <td>${titleCell(x)}${x.in_official === 0 ? `<span class="tag m" title="本時段新曲，官方下週二同步收錄池時才會確定是否收錄；估計收錄可能性 ${Math.round((x.inclusion || 0) * 100)}%">候補 · 尚未進官方池</span>` : ''}${runTag(x)}
+    <td>${titleCell(x)}${x.in_official === 0 ? `<span class="tag m" title="本時段新曲，官方下週二同步收錄池時才會確定是否收錄；依歷史候補回頭校準，約 ${Math.round((x.inclusion_p ?? x.inclusion ?? 0) * 100)}% 會被收錄">候補 · 尚未進官方池</span>` : ''}${runTag(x)}
       <div class="bar" style="width:${Math.max(3, 100 * x.score / maxPt)}%"></div></td>
     <td class="hm">${tags(x.vocalists, 's')}${tags(x.producers, 'p')}</td>
     <td class="mid hm">${catTag(x.category)}</td>
