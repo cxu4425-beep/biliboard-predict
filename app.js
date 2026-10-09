@@ -239,11 +239,13 @@ function runTag(x) {
 }
 const METH = {
   exact: '官方已公布', newsong: '新曲·精確', snapshot: '快照·精確', snapshot_part: '快照·部分時段',
+  snapshot_pre: '快照·時段前錨點',
   'curve+carryover': '累計曲線＋上期', curve: '累計曲線',
   'rate+carryover': '增速＋上期', rate: '即時增速', carryover: '上期推估'
 };
 const methCls = m => ({
   exact: 'snapshot', newsong: 'newsong', snapshot: 'snapshot', snapshot_part: 'snapshot',
+  snapshot_pre: 'snapshot',
   'curve+carryover': 'newsong', curve: 'newsong',
   'rate+carryover': 'baseline', rate: 'baseline', carryover: 'carryover'
 }[m] || 'carryover');
