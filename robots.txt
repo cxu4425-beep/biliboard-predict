@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://cxu4425-beep.github.io/biliboard-predict/sitemap.xml
