@@ -399,6 +399,7 @@ function renderIssueList(kw) {
 }
 async function openIssue(n) {
   state.curIssue = n;
+  writeHash(hashForState());
   renderIssueList($('#issueSearch').value.trim());
   const d = await api(`/api/issue/${state.board}/${n}`);
   const m = d.meta;
@@ -535,6 +536,9 @@ const LOADERS = {
 };
 async function show(p, force) {
   state.panel = p;
+  // 切分頁時把單曲視窗收掉，否則網址會停在 #/song/… 與畫面不符
+  if (!$('#songModal').hidden) { $('#songModal').hidden = true; state.curSong = null; }
+  writeHash(hashForState());
   $$('#nav button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
   $$('.panel').forEach(s => s.classList.toggle('on', s.id === 'p-' + p));
   if (!state.loaded[p] || force) {
@@ -783,7 +787,9 @@ function songHtml(s) {
         <tbody>${snapRows}</tbody></table></div></div>` : ''}`;
 }
 async function openSong(bv) {
+  state.curSong = bv;
   $('#songModal').hidden = false;
+  writeHash(hashForState());
   $('#songBody').innerHTML = '<div class="loading"><span class="spin"></span> 載入中…</div>';
   try { const s = await api('/api/song/' + bv); $('#songBody').innerHTML = songHtml(s); mountSongCharts(s); }
   catch (e) { $('#songBody').innerHTML = `<div class="hint err">載入失敗：${esc(e.message)}</div>`; }
@@ -791,11 +797,49 @@ async function openSong(bv) {
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-song]');
   if (b) { e.preventDefault(); return openSong(b.dataset.song); }
-  if (e.target.closest('[data-close]')) $('#songModal').hidden = true;
+  if (e.target.closest('[data-close]')) { $('#songModal').hidden = true; state.curSong = null; writeHash(hashForState()); }
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') $('#songModal').hidden = true; });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !$('#songModal').hidden) {
+    $('#songModal').hidden = true; state.curSong = null; writeHash(hashForState());
+  }
+});
+
+/* ------------------------------------------------------------------ 永久連結
+   整個站本來只有一個網址，沒辦法把「♪122 的榜單」或某一首歌的紀錄傳給別人 ——
+   而這個站多半是靠 QQ 群、B 站動態互相轉連結傳開的，不能分享等於少掉一半擴散力。
+   用 hash 就夠了：靜態主機不需要改寫規則，重新整理也能回到同一個畫面。
+     #/weekly            分頁
+     #/issue/1/122       榜 1 第 122 期
+     #/song/BV1xxxx      單曲在榜紀錄
+*/
+function writeHash(h) {
+  if (location.hash !== h) history.replaceState(null, '', h || location.pathname);
+}
+function hashForState() {
+  if (!$('#songModal').hidden && state.curSong) return '#/song/' + state.curSong;
+  if (state.panel === 'history' && state.curIssue) return `#/issue/${state.board}/${state.curIssue}`;
+  return '#/' + state.panel;
+}
+async function applyHash() {
+  const m = (location.hash || '').match(/^#\/(\w+)(?:\/([^/]+))?(?:\/([^/]+))?/);
+  if (!m) return false;
+  const [, kind, a, b] = m;
+  if (kind === 'song' && a) { await show(state.panel || 'weekly'); await openSong(a); return true; }
+  if (kind === 'issue' && a && b) {
+    state.board = +a;
+    const sel = $('#histBoard');
+    if (sel) sel.value = String(state.board);
+    await show('history');
+    await openIssue(+b);
+    return true;
+  }
+  if (LOADERS[kind]) { await show(kind); return true; }
+  return false;
+}
+window.addEventListener('hashchange', applyHash);
 
 loadStatus();
-show('weekly');
+(async () => { if (!await applyHash()) show('weekly'); })();
 setInterval(loadStatus, 30000);
 setInterval(() => { if (state.panel === 'data') loadLog(); }, 10000);
