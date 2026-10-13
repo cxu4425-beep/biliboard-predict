@@ -108,6 +108,48 @@ tbody tr:last-child td{border-bottom:none}
 .rk.r3{background:linear-gradient(135deg,#e5a06a,#c47a3f);color:#3a2110}
 .rk.sh{background:linear-gradient(135deg,var(--pink),#ff9ab5);color:#fff;min-width:44px;font-size:11px}
 .tt{font-weight:600;line-height:1.35;display:block;max-width:520px}
+
+/* ---------------- 密集模式 ----------------
+   18 欄的榜單在 1366×768 上一列要 115px（曲名只分到 143px，標題擠成四行），
+   40 名要捲 7000px。密集模式把封面、原文曲名／UP主／日期那一行、長條圖都收掉，
+   一列壓到 24px 上下，一個畫面看得到的從 6 列變成 25 列左右。
+   欄位本身不動 —— 要看完整資料隨時切回來就好。 */
+body.dense table{font-size:12px}
+body.dense th,body.dense td{padding:3px 6px}
+body.dense th{font-size:11.5px}
+/* 封面整欄收掉。th 的寬度寫在行內樣式，要 !important 才壓得過 */
+body.dense .c-cv{display:none!important}
+body.dense .tt{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:none}
+body.dense .tt small{display:none}
+body.dense .bar{display:none}
+body.dense .hb{display:none}
+body.dense .tag,body.dense .meth{font-size:10px;padding:1px 4px}
+/* 歌姬／作曲家的標籤換到第二行就會把整列撐成兩倍高 —— 限制成一行，多的收起來 */
+body.dense .c-who{white-space:nowrap}
+body.dense .c-who .tag:nth-of-type(n+3){display:none}
+body.dense table{line-height:1.3}
+body.dense .spk{height:16px}
+body.dense .mv .cv{display:none}
+body.dense .mv{padding:4px 2px}
+/* 表格之外的東西也一起收 —— 說明、統計卡、卡片標題加起來佔掉約 200px，等於 8 列 */
+body.dense header .brand .sub{display:none}
+body.dense .logo{font-size:17px}
+/* 說明文字、統計卡、免責聲明加起來把表格往下推了 245px（＝9 列）。
+   密集模式是「只想看榜單」的模式，這些收起來；切回完整檢視就都回來。 */
+body.dense .snapnote,body.dense .hint,body.dense #weeklyStats{display:none}
+body.dense .grid{gap:8px}
+body.dense .stat{padding:7px 11px}
+body.dense .stat .v{font-size:16px}
+body.dense .card{margin-bottom:10px}
+body.dense .card>h2{padding:8px 13px;font-size:13.5px}
+body.dense .card .body{padding:10px 13px}
+body.dense main{padding:10px}
+/* .rk 有固定 height:26px，不改的話整列再怎麼壓都停在 32px */
+body.dense .rk{min-width:22px;height:17px;border-radius:5px;font-size:11px}
+body.dense .rk.sh{min-width:34px;font-size:10px}
+/* 曲名後面的效應標籤換行也會把列撐高，整格限制成一行 */
+body.dense .c-title{white-space:nowrap}
+body.dense .c-title .tt{display:inline-block;max-width:300px;vertical-align:middle}
 .tt small{display:block;font-weight:400;color:var(--fg3);font-size:11.5px;margin-top:2px}
 .tag{
   display:inline-block;padding:1.5px 7px;border-radius:6px;font-size:11px;margin:1px 3px 1px 0;
