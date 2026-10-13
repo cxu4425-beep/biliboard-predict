@@ -264,6 +264,39 @@ async function loadStatus() {
   } catch (e) { $('#statusText').textContent = '離線'; }
 }
 
+/* ------------------------------------------------------------------ 本期異動（上榜 / 掉榜）
+   官方影片只公布前 20 名，所以單看影片不知道掉榜曲是掉到第 21 名還是第 50 名。
+   本站有副榜（第 21–40 名）資料，掉到哪裡講得出來；沒有副榜的期數會明講看不出來。 */
+function moveRow(x, kind) {
+  const where = kind === 'in'
+    ? `<span class="mv-how">${esc(x.how || '')}</span><span class="muted">${esc(x.note || '')}</span>`
+    : `<span class="muted">${esc(x.where || '')}</span>`;
+  const rk = kind === 'in' ? x.rank : x.prev_rank;
+  return `<div class="mv">
+    <span class="mv-rk ${kind}">${kind === 'in' ? '' : '上期 '}#${rk}</span>
+    ${cover(x)}
+    <div class="mv-t">${titleCell(x)}
+      <div class="mv-w">${where}${x.effect ? `<span class="tag w3">${esc(x.effect)}</span>` : ''}
+        ${(x.effects || []).map(e => `<span class="tag w3" title="${esc(e.note || '')}">${esc(e.name)}</span>`).join('')}</div>
+    </div></div>`;
+}
+function movesCard(m, ids, predicted) {
+  const card = $('#' + ids.card);
+  if (!m || (!m.in.length && !m.out.length)) { card.style.display = 'none'; return; }
+  card.style.display = '';
+  const verb = predicted ? '預測' : '';
+  $('#' + ids.count).textContent =
+    `對照 ♪${m.prev_issue} 官方前 ${m.main_n} 名　·　${verb}新上榜 ${m.in.length} 首、${verb}掉榜 ${m.out.length} 首`;
+  const col = (title, list, kind, empty) => `<div class="mv-col">
+    <h3 class="mv-h ${kind}">${title}<span class="muted"> ${list.length}</span></h3>
+    ${list.length ? list.map(x => moveRow(x, kind)).join('') : `<div class="muted" style="padding:8px 2px">${empty}</div>`}
+  </div>`;
+  $('#' + ids.body).innerHTML = `<div class="mv-grid">
+    ${col(predicted ? '預測新上榜' : '新上榜', m.in, 'in', '沒有新進榜的曲目')}
+    ${col(predicted ? '預測掉榜' : '掉榜', m.out, 'out', '上期前 ' + m.main_n + ' 名全數續榜')}
+  </div>`;
+}
+
 /* ------------------------------------------------------------------ 週榜 / 傳說曲週榜 */
 /* 窄螢幕要藏哪些欄位，用 class 標在格子上：hm = 手機隱藏（≤720px），hs = 更窄才隱藏（≤480px）。
    以前是在 style.css 用 nth-child 列索引，表格一加欄位索引就錯位 ——
@@ -326,6 +359,7 @@ async function loadWeekly() {
   ].map(([k, v, s]) => `<div class="stat"><div class="k">${k}</div><div class="v">${v}<small>${s}</small></div></div>`).join('');
   $('#weeklyHint').innerHTML = elapsedHint(d.window, d.quality) +
     ` 得分 = 新增播放×時間修正 ＋ 新增收藏×15 ＋ 新增硬幣×30 ＋ 新增點讚×3（Biliboard 官方公式）。`;
+  movesCard(d.moves, {card: 'cardMovesWeekly', count: 'movesWeeklyCount', body: 'movesWeeklyBody'}, true);
   const ef = d.effects || [];
   $('#cardEffect').style.display = ef.length ? '' : 'none';
   if (ef.length) {
@@ -356,6 +390,7 @@ async function loadWeekly() {
 async function loadLegend() {
   const d = await api('/api/predict/legend');
   renderBoard('#tblLegend', d.list);
+  movesCard(d.moves, {card: 'cardMovesLegend', count: 'movesLegendCount', body: 'movesLegendBody'}, true);
   $('#legendTitle').innerHTML = `傳說曲週榜 ♪${d.issue} 預測　第 1–${d.list.length} 名 <small>傳說曲池 ${nf(d.legend_pool)} 首</small>`;
   $('#legendHint').innerHTML = elapsedHint(d.window, d.quality) +
     ` 收錄對象為已達成傳說曲（播放 ≥ 100 萬）的曲目，計分方式與週榜相同。${esc(d.publish_note || '')}`;
@@ -423,6 +458,7 @@ async function openIssue(n) {
       <td class="hs">${(e.effects || []).map(x => `<span class="tag w3">${esc(x)}</span>`).join('')
         || (e.special_status ? `<span class="tag">${esc(e.special_status)}</span>` : '')}</td></tr>`).join('')
     + subRows(d.sub) + '</tbody>';
+  movesCard(d.moves, {card: 'cardMovesIssue', count: 'movesIssueCount', body: 'movesIssueBody'}, false);
 }
 /* 官方副榜（第 21–40 名）：官方影片與網站只給前 20 名，21 名以後出自該期專欄文末的
    「部分数据」表格圖片，本站轉錄後存起來。 */
