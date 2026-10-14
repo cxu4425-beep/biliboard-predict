@@ -229,12 +229,13 @@ function rateCell(r) {
   const t = `上期得分 ${nf(r.prev_score)}${r.est ? '（本站重建，官方只公布前 20 名）' : '（官方公布）'}`;
   return `<span class="chg ${r.value >= 0 ? 'up' : 'dn'}${r.est ? ' est' : ''}" title="${t}">${esc(r.text)}</span>`;
 }
-/* 連續在榜段：正好連續三週後掉榜＝社群說的「三周效應」，也叫「棉花糖效應」（同一件事） */
+/* 連續在榜段：正好連續三週後掉榜＝社群說的「三周效應」。
+   注意棉花糖效應是另一回事（開頭很高之後一路下滑），兩者會重疊但不是同義詞。 */
 function runTag(x) {
   const out = (x.effects || []).map(e =>
     `<span class="tag w3" title="${esc(e.note || '')}">${esc(e.name)}</span>`);
   if (x.run && x.run.watch && !out.length)
-    out.push('<span class="tag m" title="本期上榜即為連續第 3 週；下期若掉榜就是三周效應（棉花糖效應）">第 3 週</span>');
+    out.push('<span class="tag m" title="本期上榜即為連續第 3 週；下期若掉榜就是三周效應">第 3 週</span>');
   return out.join('');
 }
 const METH = {
@@ -262,6 +263,54 @@ async function loadStatus() {
     $('#btnRefresh').disabled = $('#btnExport').disabled = !!s.running;
     if (state.panel === 'data') renderData(s);
   } catch (e) { $('#statusText').textContent = '離線'; }
+}
+
+/* ------------------------------------------------------------------ 社群術語
+   名稱與定義來自社群術語表，門檻是拿全部歷期官方榜單回頭數過觸發次數才訂的
+   （後端在 bb_effects.py，這裡只負責說明給讀者看）。 */
+const GLOSSARY = [
+  ['名次變化', [
+    ['火箭', '單週上升 13 名以上', '歷來 4 次'],
+    ['N 米大電梯 / 小電梯 / 爬樓梯', '單週上升 10 名以上 / 3–9 名 / 1–2 名', '15 / 175 / 210 次'],
+    ['跳水（跳台）', '單週下降 12 名以上', '36 次'],
+    ['觸底反彈', '上期已掉到第 15 名以後，本期回升 5 名以上', '50 次'],
+  ]],
+  ['在榜週數', [
+    ['一周 / 三周 / 五周效應', '連續在榜 1 / 3 / 5 週後掉出前 20 名', '400 / 71 / 17 段'],
+    ['棉花糖效應', '首週就在前 2 名，之後連續每週下滑（至少 3 週）。<b>和三周效應不是同一件事</b>——三周講的是只待三週，棉花糖講的是開頭很高之後一路下滑，兩者會重疊', '86 次'],
+    ['驅魔效應', '撐過三周效應：第 4 週名次還比第 3 週高', '23 次'],
+    ['體驗卡', '最高衝到前 3 名，但總共只在榜 1–2 週（最高第 1 名就叫榜一體驗卡）', '37 首'],
+    ['高考加油', '總在榜週數達 18 週', '29 首'],
+    ['N 週大壽 / 小壽', '總在榜週數達整十週，50 週以上稱大壽', '10 週 56 首、50 週 2 首'],
+  ]],
+  ['在榜位置', [
+    ['前 10 / 前 20 守門', '名次正好卡在該門檻的最後一名', '每期各 1 首'],
+    ['門番', '近 30 期有 20 期上榜', '目前 4 首'],
+    ['門番候補', '近 15 期有 10 期上榜', '目前 8 首'],
+  ]],
+  ['其他', [
+    ['神話效應', '累計播放這一期突破 1000 萬（神話），或已逼近 1000 萬，而且名次上升', '池內 29 首已達神話'],
+    ['白月光回榜', '投稿滿 180 天、距上次上榜 8 期以上的老歌回榜', '42 次'],
+    ['本家效應', '官方把追蹤的 BV 換成本家新投稿（官方標 re）', '—'],
+  ]],
+];
+const NO_AUTO = [
+  ['冰', '形容旋律洗腦。主觀，沒有資料可以依據'],
+  ['傳說榜特效', '影片本身的視覺效果，不是榜單資料'],
+  ['手書效應', '要知道有沒有被大量做成手書／二創，得另外去搜尋二創稿件'],
+  ['區', '形容數據漲得很慢。「很慢」沒有公認的界線，硬訂一個只會製造誤解'],
+];
+function renderGlossary() {
+  const box = $('#glossaryBox');
+  if (!box) return;
+  box.innerHTML = GLOSSARY.map(([sec, rows]) => `<h3 class="gl-h">${esc(sec)}</h3>
+    <div class="tw"><table class="gl"><thead><tr><th style="width:190px">稱呼</th><th>定義</th>
+      <th class="hm" style="width:130px">歷史出現</th></tr></thead><tbody>` +
+    rows.map(([n, d, c]) => `<tr><td><span class="tag w3">${esc(n)}</span></td><td>${d}</td>
+      <td class="muted hm">${esc(c)}</td></tr>`).join('') + '</tbody></table></div>').join('') +
+    `<h3 class="gl-h">沒有自動判定的</h3><div class="tw"><table class="gl"><tbody>` +
+    NO_AUTO.map(([n, d]) => `<tr><td style="width:190px"><span class="tag">${esc(n)}</span></td>
+      <td class="muted">${esc(d)}</td></tr>`).join('') + '</tbody></table></div>';
 }
 
 /* ------------------------------------------------------------------ 本期異動（上榜 / 掉榜）
@@ -446,7 +495,7 @@ async function openIssue(n) {
     <th class="num hm" style="width:74px" title="rate：官方公布的得分與上期相比的增減">rate</th>
     <th class="num hm" style="width:96px">新增播放</th><th class="num hm" style="width:80px">收藏</th><th class="num hm" style="width:80px">硬幣</th>
     <th class="num hm" style="width:80px">點讚</th><th class="num hm" style="width:62px">在榜</th><th class="num hm" style="width:62px">最高</th>
-    <th class="hm" style="width:110px" title="連續在榜第幾週；正好連續三週後掉榜即「三周效應」（又稱棉花糖效應）">連續</th>
+    <th class="hm" style="width:110px" title="連續在榜第幾週；正好連續三週後掉榜即「三周效應」，連續五週則是「五周效應」">連續</th>
     <th class="hs" style="width:150px">效應</th></tr></thead><tbody>` +
     d.entries.map(e => `<tr><td class="mid">${rk(e.rank)}</td><td class="c-cv">${cover(e)}</td><td class="c-title">${titleCell(e)}</td>
       <td class="hm c-who">${tags(e.vocalists, 's')}${tags(e.producers, 'p')}</td><td class="mid hm">${state.board === 3 ? '—' : chg(offChg(e))}</td>
@@ -568,7 +617,7 @@ const LOADERS = {
   weekly: loadWeekly, legend: loadLegend, half: () => loadPeriod('half'), annual: () => loadPeriod('annual'),
   milestones: loadMilestones, accuracy: loadAccuracy,
   history: loadIssues, library: async () => { await loadFacets(); await loadLib(1); },
-  data: async () => { renderData(state.status || await api('/api/status')); await loadMethod(); await loadLog(); },
+  data: async () => { renderData(state.status || await api('/api/status')); renderGlossary(); await loadMethod(); await loadLog(); },
 };
 async function show(p, force) {
   state.panel = p;
@@ -804,7 +853,7 @@ function songHtml(s) {
     <div class="card"><h2>每期官方得分 <small>滑鼠移到柱上看數值</small></h2><div class="body"><div class="vbox" id="chScore"></div></div></div>` : ''}
     ${(s.series || []).length > 1 ? `<div class="card"><h2>累計播放走勢 <small>本站即時快照${s.milestone ? '　·　' + esc(msText(s.milestone)) : ''}</small></h2>
       <div class="body"><div class="vbox" id="chViews"></div></div></div>` : ''}
-    ${(s.runs || []).length ? `<div class="card"><h2>連續在榜段 <small>正好連續三週後掉榜＝三周效應（又稱棉花糖效應）</small></h2>
+    ${(s.runs || []).length ? `<div class="card"><h2>連續在榜段 <small>正好連續三週後掉榜＝三周效應；撐過第 4 週且名次回升＝驅魔效應</small></h2>
       <div class="body">${s.runs.map(r => `<span class="runseg${r.effect ? ' w3' : ''}">${BOARD_NAME[r.board_id]}　♪${r.from}${r.weeks > 1 ? '–♪' + r.to : ''}　${r.weeks} 週${r.effect ? '　' + esc(r.effect) : (r.completed ? '' : '　進行中')}</span>`).join('')}</div></div>` : ''}
     <div class="card"><h2>在榜紀錄 <small>Biliboard 官方公布值，共 ${h.length} 筆</small></h2>
       <div class="tw"><table><thead><tr><th style="width:100px">榜別</th><th class="mid" style="width:60px">期數</th>

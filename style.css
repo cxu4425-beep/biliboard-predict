@@ -336,6 +336,13 @@ footer{max-width:1440px;margin:0 auto;padding:24px 20px 40px;color:var(--fg3);fo
 .tag.c-二創{background:color-mix(in srgb,var(--gold) 20%,transparent);border-color:transparent;color:var(--gold);font-weight:600}
 .card>h2 .spacer{flex:1}
 
+/* ---------------- 社群術語表 ---------------- */
+.gl-h{margin:18px 0 8px;font-size:13.5px;font-weight:700;color:var(--fg2)}
+.gl-h:first-child{margin-top:0}
+table.gl{min-width:0;font-size:12.8px}
+table.gl td{vertical-align:top;line-height:1.6}
+table.gl .tag{white-space:nowrap}
+
 /* 靜態快照版的說明條 */
 .snapnote{margin:0 0 14px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;
   background:color-mix(in srgb,var(--line) 16%,transparent);font-size:13px;line-height:1.7}
